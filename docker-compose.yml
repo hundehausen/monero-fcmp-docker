@@ -1,0 +1,54 @@
+services:
+  monerod:
+    image: monero-fcmp:v0.19.0.0-beta.1.1
+    container_name: monero-fcmp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    user: "1000:1000"  # Change to your host UID/GID, or remove to run as 'monero'
+    command:
+      - --testnet
+      - --rpc-restricted-bind-ip=0.0.0.0
+      - --rpc-restricted-bind-port=28089
+      - --no-igd
+      - --no-zmq
+      - --enable-dns-blocklist
+      - --ban-list=/home/monero/ban_list.txt
+      # Uncomment the line below to run a public node
+      # - --public-node
+      # Uncomment the line below to prune the blockchain
+      # - --prune-blockchain
+      # Uncomment to limit log output
+      # - --log-level=0
+    ports:
+      # P2P port - required for syncing and propagating transactions/blocks
+      - "28080:28080"
+      # Restricted RPC port - safe to expose, allows wallet connections
+      # Bind to localhost only if you don't need external wallet access:
+      - "127.0.0.1:28089:28089"
+      # Uncomment below if you need full (non-restricted) RPC access
+      # WARNING: Only expose full RPC behind a reverse proxy with TLS or local network
+      # - "127.0.0.1:28081:28081"
+    volumes:
+      # Persist blockchain data, logs, and config across container restarts
+      - monero-data:/home/monero/.bitmonero
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:28081/get_height"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    # Resource limits (optional but recommended)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2'
+    #       memory: 4G
+    #     reservations:
+    #       cpus: '1'
+    #       memory: 2G
+
+volumes:
+  monero-data:
+    driver: local
