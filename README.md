@@ -1,8 +1,8 @@
-# Monero FCMP++ & Carrot Beta Stressnet Docker Image
+# Monero FCMP++ & Carrot Beta Stressnet v2.0 Docker Image
 
 [![Latest image build on push](https://github.com/hundehausen/monero-fcmp-docker/actions/workflows/update-image-on-push.yml/badge.svg)](https://github.com/hundehausen/monero-fcmp-docker/actions/workflows/update-image-on-push.yml)
 
-A containerized build of the [Monero FCMP++ & Carrot beta stressnet](https://github.com/seraphis-migration/monero/releases/tag/v0.19.0.0-beta.1.1) (`v0.19.0.0-beta.1.1`), built from source on Alpine Linux.
+A containerized build of the [Monero FCMP++ & Carrot beta stressnet](https://github.com/seraphis-migration/monero/releases/tag/v0.19.0.0-beta.2.0) (`v0.19.0.0-beta.2.0`), built from source on Alpine Linux.
 
 > **WARNING:** This is beta software intended for the FCMP++ & Carrot beta stressnet. Do not use this with mainnet funds. The anonymity set on the stressnet is very small (dozens at best).
 
@@ -15,7 +15,7 @@ This image packages `monerod` from the `seraphis-migration/monero` repository, w
 - **FCMP++**: Full Chain Membership Proofs replacing ring signatures
 - **Carrot**: Next-generation addressing protocol
 
-The beta stressnet hard forks from testnet on **May 6, 2026, at block 2997100**.
+The beta stressnet hard forks from testnet on **May 26, 2026, at block 3012000**.
 
 ---
 

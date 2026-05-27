@@ -1,6 +1,6 @@
-# Build stage for seraphis-migration/monero FCMP++ & Carrot beta stressnet v1.1
-ARG MONERO_BRANCH=v0.19.0.0-beta.1.1
-ARG MONERO_COMMIT_HASH=a6737c15afd734dc27fb043d196abd7608a3dd63
+# Build stage for seraphis-migration/monero FCMP++ & Carrot beta stressnet v2.0
+ARG MONERO_BRANCH=v0.19.0.0-beta.2.0
+ARG MONERO_COMMIT_HASH=8ed2f782517db08bd6069517b7dcc2959b816e69
 
 FROM alpine:3.23.4 AS build
 LABEL author="fcmp-docker" \
