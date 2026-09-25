@@ -1,8 +1,8 @@
-# Build stage for seraphis-migration/monero FCMP++ & Carrot beta stressnet v2.0
-ARG MONERO_BRANCH=v0.19.0.0-beta.2.0
-ARG MONERO_COMMIT_HASH=8ed2f782517db08bd6069517b7dcc2959b816e69
+# Build stage for seraphis-migration/monero FCMP++ & Carrot beta stressnet v3.0
+ARG MONERO_BRANCH=v0.19.0.0-beta.3.0
+ARG MONERO_COMMIT_HASH=d816367cb1aa405bfa68a20ac3e034d0759d968e
 
-FROM alpine:3.23.4 AS build
+FROM alpine:3.24.2 AS build
 LABEL author="fcmp-docker" \
       maintainer="fcmp-docker"
 
@@ -124,8 +124,7 @@ RUN set -ex && git clone --recursive --branch ${MONERO_BRANCH} \
     https://github.com/seraphis-migration/monero . \
     && test `git rev-parse HEAD` = ${MONERO_COMMIT_HASH} || exit 1 \
     && sed -i 's/set(RUST_TOOLCHAIN "-gnu")/set(RUST_TOOLCHAIN "-musl")/' src/fcmp_pp/fcmp_pp_rust/CMakeLists.txt \
-    && sed -i 's/cargo build --target "\${RUST_TARGET}" --release/cargo build --release/' src/fcmp_pp/fcmp_pp_rust/CMakeLists.txt \
-    && sed -i 's/cargo build --target "\${RUST_TARGET}" \${CARGO_OPTIONS}/cargo build \${CARGO_OPTIONS}/' src/fcmp_pp/fcmp_pp_rust/CMakeLists.txt \
+    && sed -i 's/--target "\${RUST_TARGET}" //g' src/fcmp_pp/fcmp_pp_rust/CMakeLists.txt \
     && sed -i 's/\${CMAKE_CURRENT_BINARY_DIR}\/\${RUST_TARGET}\/\${TARGET_DIR}\/libfcmp_pp_rust.a/\${CMAKE_CURRENT_BINARY_DIR}\/\${TARGET_DIR}\/libfcmp_pp_rust.a/' src/fcmp_pp/fcmp_pp_rust/CMakeLists.txt \
     && case ${TARGETARCH:-amd64} in \
         "arm64") CMAKE_ARCH="armv8-a"; CMAKE_BUILD_TAG="linux-armv8" ;; \
@@ -151,7 +150,7 @@ RUN set -ex && git clone https://github.com/Boog900/monero-ban-list \
     && gpg --verify --status-fd 1 ./sigs/jeffro256.sig ban_list.txt 2>/dev/null
 
 # Final stage
-FROM alpine:3.23.4 AS final
+FROM alpine:3.24.2 AS final
 
 # Upgrade base image
 RUN set -ex && apk --update --no-cache upgrade
