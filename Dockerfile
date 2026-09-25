@@ -2,7 +2,7 @@
 ARG MONERO_BRANCH=v0.19.0.0-beta.3.0
 ARG MONERO_COMMIT_HASH=d816367cb1aa405bfa68a20ac3e034d0759d968e
 
-FROM alpine:3.23.4 AS build
+FROM alpine:3.24.2 AS build
 LABEL author="fcmp-docker" \
       maintainer="fcmp-docker"
 
@@ -150,7 +150,7 @@ RUN set -ex && git clone https://github.com/Boog900/monero-ban-list \
     && gpg --verify --status-fd 1 ./sigs/jeffro256.sig ban_list.txt 2>/dev/null
 
 # Final stage
-FROM alpine:3.23.4 AS final
+FROM alpine:3.24.2 AS final
 
 # Upgrade base image
 RUN set -ex && apk --update --no-cache upgrade
