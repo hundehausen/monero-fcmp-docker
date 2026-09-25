@@ -117,7 +117,9 @@ RUN set -ex && wget "https://github.com/NLnetLabs/unbound/archive/refs/tags/${LI
     make -j${NPROC:-$(nproc)} && \
     make -j${NPROC:-$(nproc)} install
 
-# Clone and build seraphis-migration/monero
+# Clone and build seraphis-migration/monero.
+# Alpine boost-static archives use the shared C++ runtime, so Boost CONFIG
+# rejects them while Boost_USE_STATIC_RUNTIME is ON.
 WORKDIR /monero
 RUN set -ex && git clone --recursive --branch ${MONERO_BRANCH} \
     --depth 1 --shallow-submodules \
@@ -126,6 +128,8 @@ RUN set -ex && git clone --recursive --branch ${MONERO_BRANCH} \
     && sed -i 's/set(RUST_TOOLCHAIN "-gnu")/set(RUST_TOOLCHAIN "-musl")/' src/fcmp_pp/fcmp_pp_rust/CMakeLists.txt \
     && sed -i 's/--target "\${RUST_TARGET}" //g' src/fcmp_pp/fcmp_pp_rust/CMakeLists.txt \
     && sed -i 's/\${CMAKE_CURRENT_BINARY_DIR}\/\${RUST_TARGET}\/\${TARGET_DIR}\/libfcmp_pp_rust.a/\${CMAKE_CURRENT_BINARY_DIR}\/\${TARGET_DIR}\/libfcmp_pp_rust.a/' src/fcmp_pp/fcmp_pp_rust/CMakeLists.txt \
+    && grep -q 'set(Boost_USE_STATIC_RUNTIME ON)' CMakeLists.txt \
+    && sed -i 's/set(Boost_USE_STATIC_RUNTIME ON)/set(Boost_USE_STATIC_RUNTIME OFF)/' CMakeLists.txt \
     && case ${TARGETARCH:-amd64} in \
         "arm64") CMAKE_ARCH="armv8-a"; CMAKE_BUILD_TAG="linux-armv8" ;; \
         "amd64") CMAKE_ARCH="x86-64"; CMAKE_BUILD_TAG="linux-x64" ;; \
