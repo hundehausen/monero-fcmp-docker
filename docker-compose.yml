@@ -33,12 +33,6 @@ services:
     volumes:
       # Persist blockchain data, logs, and config across container restarts
       - monero-data:/home/monero/.bitmonero
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:28081/get_height"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 60s
     # Resource limits (optional but recommended)
     # deploy:
     #   resources:

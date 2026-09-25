@@ -175,8 +175,9 @@ RUN set -ex && adduser -Ds /bin/ash monero \
     && mkdir -p /home/monero/.bitmonero \
     && chown -R monero:monero /home/monero/.bitmonero
 
-# Copy entrypoint
+# Copy entrypoint and healthcheck
 COPY --chmod=0755 entrypoint.sh /entrypoint.sh
+COPY --chmod=0755 healthcheck.sh /healthcheck.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
 
 # Install fixuid
@@ -203,8 +204,8 @@ COPY --chown=monero:monero --from=build /monero/monero-ban-list/ban_list.txt ./b
 EXPOSE 28080
 EXPOSE 28089
 
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=5s CMD curl --fail http://127.0.0.1:28089/get_height || exit 1
+# Healthcheck against get_height, honoring --rpc-login if it is set
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s CMD /healthcheck.sh || exit 1
 
 # Default args for testnet FCMP++ stressnet
 CMD ["--testnet", "--rpc-restricted-bind-ip=0.0.0.0", "--rpc-restricted-bind-port=28089", "--no-igd", "--no-zmq", "--enable-dns-blocklist", "--ban-list=/home/monero/ban_list.txt"]
