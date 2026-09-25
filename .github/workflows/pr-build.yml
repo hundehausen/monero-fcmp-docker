@@ -5,6 +5,7 @@ on:
     paths:
       - Dockerfile
       - entrypoint.sh
+      - healthcheck.sh
       - .github/workflows/pr-build.yml
 
 permissions:
@@ -52,6 +53,41 @@ jobs:
 
       - name: Check monerod version
         run: timeout 60 docker run --rm "${TEST_IMAGE}" --version
+
+      - name: Check RPC healthcheck
+        run: |
+          set -eu
+          name="monerod-hc"
+          cleanup() { docker rm -f "$name" >/dev/null 2>&1 || true; }
+          trap cleanup EXIT
+          # These args replace the image CMD. Keep the restricted testnet
+          # port and stay offline so the probe checks RPC without syncing.
+          docker run -d --name "$name" "${TEST_IMAGE}" \
+            --testnet \
+            --offline \
+            --rpc-restricted-bind-ip=0.0.0.0 \
+            --rpc-restricted-bind-port=28089 \
+            --no-igd \
+            --no-zmq \
+            --ban-list=/home/monero/ban_list.txt
+          deadline=$((SECONDS + 180))
+          while [ "$SECONDS" -lt "$deadline" ]; do
+            status="$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$name")"
+            case "$status" in
+              healthy) exit 0 ;;
+              unhealthy)
+                docker logs "$name" || true
+                exit 1
+                ;;
+            esac
+            if [ "$(docker inspect -f '{{.State.Running}}' "$name")" != "true" ]; then
+              docker logs "$name" || true
+              exit 1
+            fi
+            sleep 5
+          done
+          docker logs "$name" || true
+          exit 1
 
       - name: Delete test image
         run: |
