@@ -1,8 +1,8 @@
-# Monero FCMP++ & Carrot Beta Stressnet v2.0 Docker Image
+# Monero FCMP++ & Carrot Beta Stressnet v3.0 Docker Image
 
 [![Latest image build on push](https://github.com/hundehausen/monero-fcmp-docker/actions/workflows/update-image-on-push.yml/badge.svg)](https://github.com/hundehausen/monero-fcmp-docker/actions/workflows/update-image-on-push.yml)
 
-A containerized build of the [Monero FCMP++ & Carrot beta stressnet](https://github.com/seraphis-migration/monero/releases/tag/v0.19.0.0-beta.2.0) (`v0.19.0.0-beta.2.0`), built from source on Alpine Linux.
+A containerized build of the [Monero FCMP++ & Carrot beta stressnet](https://github.com/seraphis-migration/monero/releases/tag/v0.19.0.0-beta.3.0) (`v0.19.0.0-beta.3.0`), built from source on Alpine Linux.
 
 > **WARNING:** This is beta software intended for the FCMP++ & Carrot beta stressnet. Do not use this with mainnet funds. The anonymity set on the stressnet is very small (dozens at best).
 
@@ -15,7 +15,7 @@ This image packages `monerod` from the `seraphis-migration/monero` repository, w
 - **FCMP++**: Full Chain Membership Proofs replacing ring signatures
 - **Carrot**: Next-generation addressing protocol
 
-The beta stressnet hard forks from testnet on **May 26, 2026, at block 3012000**.
+Beta v3 hard forks from the beta v2 stressnet at block **3102800** (hard fork version 17), with version 18 at block **3103520**. The target date is **October 5, 2026**. The daemon rolls an existing beta stressnet database back to before the v2 fork on startup. After that rollback, rescan wallets from their restore height.
 
 ---
 
@@ -168,10 +168,10 @@ docker logs -f monero-fcmp
 ## Important Notes
 
 - **Your FCMP++ wallet MUST point to an FCMP++ compatible daemon.**
-- If you have an existing testnet daemon synced, the initial database migration can take **several hours**.
+- An existing beta stressnet database is rolled back to before the v2 fork automatically. Rescan wallets from restore height after that. A fresh sync from an older testnet database can still take **several hours**.
 - Constructing many-input transactions takes some time.
 - The following features are **not yet functional**:
-  - Watch-only wallets & cold wallets
+  - Watch-only wallets
   - Hardware wallet support
   - Multisig
   - Transaction proofs

@@ -1,6 +1,6 @@
 services:
   monerod:
-    image: monero-fcmp:v0.19.0.0-beta.2.0
+    image: monero-fcmp:v0.19.0.0-beta.3.0
     container_name: monero-fcmp
     build:
       context: .
