@@ -188,7 +188,9 @@ If you have an extreme threat model, this may be an unacceptable risk.
 
 ## Monitoring
 
-A basic healthcheck is included (checks `get_height` on the full RPC port). You can query it manually:
+The image healthcheck calls `get_height` on the restricted RPC port from the daemon's command line. If that flag is absent, it uses `--rpc-bind-port`, then port 28081. When `--rpc-login` is present, the check sends those credentials.
+
+You can query the daemon manually:
 
 ```bash
 curl -s http://localhost:28081/get_height | jq .
